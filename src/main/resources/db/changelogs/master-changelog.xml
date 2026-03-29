@@ -10,7 +10,10 @@
     <!--  All CREATE TABLE changesets go here           -->
     <!-- ============================================= -->
     <include file="init/tables-init.xml" relativeToChangelogFile="true"/>
-
+    <include file="init/users-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/roles-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/user_roles-init.xml" relativeToChangelogFile="true"/>
+    <include file="data/roles-data-V001.xml" relativeToChangelogFile="true"/>
 
     <!-- ============================================= -->
     <!--  CHANGES: Schema modifications after init     -->
