@@ -1,0 +1,47 @@
+<changeSet id="008-create-triggers-product-denorm" author="lopatenko">
+    <preConditions onFail="HALT">
+        <tableExists schemaName="dbo" tableName="product"/>
+        <tableExists schemaName="dbo" tableName="category"/>
+        <columnExists schemaName="dbo" tableName="product" columnName="category_name_denorm"/>
+    </preConditions>
+
+    <sql splitStatements="false">
+        CREATE TRIGGER trg_sync_product_category_name
+        ON dbo.product
+        AFTER INSERT, UPDATE
+        AS
+        BEGIN
+            -- Перевіряємо, чи оновлювався category_id або чи це нова вставка
+            IF UPDATE(category_id) OR EXISTS (SELECT 1 FROM inserted d WHERE NOT EXISTS (SELECT 1 FROM deleted WHERE id = d.id))
+            BEGIN
+                UPDATE p
+                SET category_name_denorm = c.name
+                FROM dbo.product p
+                INNER JOIN inserted i ON p.id = i.id
+                LEFT JOIN dbo.category c ON i.category_id = c.id;
+            END
+        END;
+    </sql>
+
+    <sql splitStatements="false">
+        CREATE TRIGGER trg_sync_category_name_update
+        ON dbo.category
+        AFTER UPDATE
+        AS
+        BEGIN
+            -- Оновлюємо товари тільки якщо змінилася назва категорії
+            IF UPDATE(name)
+            BEGIN
+                UPDATE p
+                SET category_name_denorm = i.name
+                FROM dbo.product p
+                INNER JOIN inserted i ON p.category_id = i.id;
+            END
+        END;
+    </sql>
+
+    <rollback>
+        <sql>DROP TRIGGER IF EXISTS trg_sync_product_category_name;</sql>
+        <sql>DROP TRIGGER IF EXISTS trg_sync_category_name_update;</sql>
+    </rollback>
+</changeSet>

@@ -1,0 +1,12 @@
+<changeSet id="007-drop-property-table" author="lopatenko">
+    <preConditions onFail="HALT">
+        <tableExists schemaName="dbo" tableName="property"/>
+    </preConditions>
+    
+    <dropTable tableName="property" cascadeConstraints="true"/>
+
+    <sql>
+        DELETE FROM dbo.tables WHERE name = 'property';
+    </sql>
+    
+    </changeSet>

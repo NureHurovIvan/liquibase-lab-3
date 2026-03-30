@@ -1,0 +1,26 @@
+<changeSet id="006-add-category-name-to-product" author="lopatenko">
+    <preConditions onFail="HALT">
+        <tableExists schemaName="dbo" tableName="product"/>
+    </preConditions>
+    
+    <addColumn tableName="product">
+        <column name="category_name_denorm" type="VARCHAR(255)"/>
+    </addColumn>
+
+    <sql>
+        UPDATE dbo.tables 
+        SET column_count = (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('product')),
+            last_update_at = SYSUTCDATETIME()
+        WHERE name = 'product';
+    </sql>
+    
+    <rollback>
+        <dropColumn tableName="product" columnName="category_name_denorm"/>
+        <sql>
+            UPDATE dbo.tables 
+            SET column_count = (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('product')),
+                last_update_at = SYSUTCDATETIME()
+            WHERE name = 'product';
+        </sql>
+    </rollback>
+</changeSet>

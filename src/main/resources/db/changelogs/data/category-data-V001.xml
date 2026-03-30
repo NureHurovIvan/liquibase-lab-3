@@ -1,0 +1,12 @@
+<changeSet id="004-insert-category-data" author="lopatenko">
+    <preConditions onFail="HALT">
+        <tableExists schemaName="dbo" tableName="category"/>
+    </preConditions>
+    
+    <insert tableName="category">
+        <column name="name" value="Laptops"/>
+    </insert>
+    <insert tableName="category">
+        <column name="name" value="Smartphones"/>
+    </insert>
+</changeSet>

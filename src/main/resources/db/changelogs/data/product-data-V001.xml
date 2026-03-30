@@ -1,0 +1,16 @@
+<changeSet id="005-insert-product-data" author="lopatenko">
+    <preConditions onFail="HALT">
+        <tableExists schemaName="dbo" tableName="product"/>
+    </preConditions>
+    
+    <insert tableName="product">
+        <column name="category_id" valueNumeric="1"/>
+        <column name="name" value="MacBook Pro 14"/>
+        <column name="price" valueNumeric="1999.99"/>
+    </insert>
+    <insert tableName="product">
+        <column name="category_id" valueNumeric="2"/>
+        <column name="name" value="iPhone 15 Pro"/>
+        <column name="price" valueNumeric="999.99"/>
+    </insert>
+</changeSet>

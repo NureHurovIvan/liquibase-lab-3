@@ -14,6 +14,14 @@
     <include file="init/roles-init.xml" relativeToChangelogFile="true"/>
     <include file="init/user_roles-init.xml" relativeToChangelogFile="true"/>
     <include file="data/roles-data-V001.xml" relativeToChangelogFile="true"/>
+    <include file="db/changelogs/init/category-init.xml"/>
+    <include file="db/changelogs/init/product-init.xml"/>
+    <include file="db/changelogs/init/property-init.xml"/>
+    <include file="db/changelogs/data/category-data-V001.xml"/>
+    <include file="db/changelogs/data/product-data-V001.xml"/>
+    <include file="db/changelogs/changes/product-change-V001.xml"/>
+    <include file="db/changelogs/triggers/product-trigger-V001.xml"/>
+    <include file="db/changelogs/changes/property-change-V001.xml"/>
 
     <!-- ============================================= -->
     <!--  CHANGES: Schema modifications after init     -->
