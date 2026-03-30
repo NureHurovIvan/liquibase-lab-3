@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="002-insert-order-data" author="Tiulieniev">
+        <preConditions onFail="HALT">
+            <tableExists tableName="status"/>
+            <tableExists tableName="orders"/>
+            <tableExists tableName="product_order"/>
+        </preConditions>
+
+        <insert tableName="status"><column name="name" value="New"/></insert>
+        <insert tableName="status"><column name="name" value="Processing"/></insert>
+        <insert tableName="status"><column name="name" value="Completed"/></insert>
+
+        <insert tableName="orders">
+            <column name="user_id" value="1"/>
+            <column name="status_id" value="1"/>
+            <column name="total_amount" value="1500.50"/>
+        </insert>
+        <insert tableName="orders">
+            <column name="user_id" value="2"/>
+            <column name="status_id" value="2"/>
+            <column name="total_amount" value="800.00"/>
+        </insert>
+
+        <insert tableName="product_order">
+            <column name="order_id" value="1"/>
+            <column name="product_id" value="1"/>
+            <column name="quantity" value="2"/>
+            <column name="price" value="750.25"/>
+        </insert>
+        <insert tableName="product_order">
+            <column name="order_id" value="2"/>
+            <column name="product_id" value="3"/>
+            <column name="quantity" value="1"/>
+            <column name="price" value="800.00"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="product_order"/>
+            <delete tableName="orders"/>
+            <delete tableName="status"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

@@ -14,6 +14,11 @@
     <include file="init/roles-init.xml" relativeToChangelogFile="true"/>
     <include file="init/user_roles-init.xml" relativeToChangelogFile="true"/>
     <include file="data/roles-data-V001.xml" relativeToChangelogFile="true"/>
+    <include file="init/orders-init.xml" relativeToChangelogFile="true"/>
+    <include file="data/orders-data-V001.xml" relativeToChangelogFile="true"/>
+    <include file="changes/orders-change-V001.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/orders-trigger-V001.xml" relativeToChangelogFile="true"/>
+    <include file="changes/product_order-drop-V001.xml" relativeToChangelogFile="true"/>
 
     <!-- ============================================= -->
     <!--  CHANGES: Schema modifications after init     -->

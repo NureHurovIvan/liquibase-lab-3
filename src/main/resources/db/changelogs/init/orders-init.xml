@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="001-create-order-tables" author="Tiulieniev">
+        
+        <createTable tableName="status">
+            <column name="id" type="int" autoIncrement="true"><constraints primaryKey="true"/></column>
+            <column name="name" type="nvarchar(50)"><constraints nullable="false"/></column>
+        </createTable>
+
+        <createTable tableName="orders">
+            <column name="id" type="int" autoIncrement="true"><constraints primaryKey="true"/></column>
+            <column name="user_id" type="int"><constraints nullable="false"/></column>
+            <column name="status_id" type="int"><constraints nullable="false"/></column>
+            <column name="total_amount" type="decimal(10,2)"/>
+            <column name="created_at" type="datetime" defaultValueComputed="GETDATE()"/>
+        </createTable>
+
+        <createTable tableName="product_order">
+            <column name="order_id" type="int"><constraints nullable="false"/></column>
+            <column name="product_id" type="int"><constraints nullable="false"/></column>
+            <column name="quantity" type="int"><constraints nullable="false"/></column>
+            <column name="price" type="decimal(10,2)"><constraints nullable="false"/></column>
+        </createTable>
+        
+        <addPrimaryKey tableName="product_order" columnNames="order_id, product_id" constraintName="PK_product_order"/>
+
+        <addForeignKeyConstraint baseTableName="orders" baseColumnNames="status_id" constraintName="FK_orders_status" referencedTableName="status" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="product_order" baseColumnNames="order_id" constraintName="FK_product_order_orders" referencedTableName="orders" referencedColumnNames="id"/>
+
+        <createIndex tableName="orders" indexName="IX_orders_user"><column name="user_id"/></createIndex>
+        <createIndex tableName="orders" indexName="IX_orders_status"><column name="status_id"/></createIndex>
+        <createIndex tableName="product_order" indexName="IX_product_order_product"><column name="product_id"/></createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES 
+            ('liquibase_lab', 'status', 'DATA_TABLE', 'Tiulieniev', 1, 'order_service', 'Order statuses', (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('status')), SYSUTCDATETIME(), NULL),
+            ('liquibase_lab', 'orders', 'DATA_TABLE', 'Tiulieniev', 1, 'order_service', 'Main orders table', (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('orders')), SYSUTCDATETIME(), NULL),
+            ('liquibase_lab', 'product_order', 'DATA_TABLE', 'Tiulieniev', 1, 'order_service', 'Order details', (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('product_order')), SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+            <dropTable tableName="product_order"/>
+            <dropTable tableName="orders"/>
+            <dropTable tableName="status"/>
+            <sql>
+                DELETE FROM dbo.tables WHERE name IN ('status', 'orders', 'product_order');
+            </sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
