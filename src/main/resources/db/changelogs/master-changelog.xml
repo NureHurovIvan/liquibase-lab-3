@@ -10,6 +10,11 @@
     <!--  All CREATE TABLE changesets go here           -->
     <!-- ============================================= -->
     <include file="init/tables-init.xml" relativeToChangelogFile="true"/>
+    <include file="init/basket-init.xml" relativeToChangelogFile="true"/>
+    <include file="data/basket-data-V001.xml" relativeToChangelogFile="true"/>
+    <include file="changes/basket-change-V001.xml" relativeToChangelogFile="true"/>
+    <include file="triggers/basket-trigger-V001.xml" relativeToChangelogFile="true"/>
+    <include file="changes/product_basket-drop-V001.xml" relativeToChangelogFile="true"/>
 
 
     <!-- ============================================= -->
