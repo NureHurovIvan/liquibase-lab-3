@@ -51,5 +51,31 @@
             </sql>
         </rollback>
     </changeSet>
+    <changeSet id="basket-add-column-discount" author="Khudanova">
+    <preConditions onFail="MARK_RAN">
+        <tableExists tableName="basket"/>
+    </preConditions>
+    <addColumn tableName="basket">
+        <column name="applied_discount" type="decimal(10,2)" defaultValue="0.00"/>
+    </addColumn>
+    </changeSet>
+    <changeSet id="basket-create-index" author="Khudanova">
+    <createIndex tableName="product_basket" indexName="idx_pb_basket_id">
+        <column name="basket_id"/>
+    </createIndex>
+    </changeSet>
+    <changeSet id="basket-log-trigger" author="Khudanova" runOnChange="true">
+    <sql splitStatements="false" endDelimiter="GO">
+        CREATE OR ALTER TRIGGER trg_BasketInsertLog
+        ON product_basket
+        AFTER INSERT
+        AS
+        BEGIN
+            INSERT INTO log (action_description, created_at)
+            VALUES ('Додано товар до кошика', GETDATE());
+        END;
+        GO
+    </sql>
+    </changeSet>
 
 </databaseChangeLog>
