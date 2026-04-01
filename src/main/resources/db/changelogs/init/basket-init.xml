@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="001-create-basket-tables" author="Khudanova">
+        
+        <createTable tableName="basket">
+            <column name="id" type="int" autoIncrement="true"><constraints primaryKey="true"/></column>
+            <column name="user_id" type="int"><constraints nullable="false"/></column>
+            <column name="created_at" type="datetime" defaultValueComputed="GETDATE()"/>
+        </createTable>
+
+        <createTable tableName="product_basket">
+            <column name="basket_id" type="int"><constraints nullable="false"/></column>
+            <column name="product_id" type="int"><constraints nullable="false"/></column>
+            <column name="quantity" type="int"><constraints nullable="false"/></column>
+        </createTable>
+
+        <createTable tableName="log">
+            <column name="id" type="int" autoIncrement="true"><constraints primaryKey="true"/></column>
+            <column name="basket_id" type="int"><constraints nullable="false"/></column>
+            <column name="action" type="nvarchar(255)"><constraints nullable="false"/></column>
+            <column name="action_date" type="datetime" defaultValueComputed="GETDATE()"/>
+        </createTable>
+        
+        <addPrimaryKey tableName="product_basket" columnNames="basket_id, product_id" constraintName="PK_product_basket"/>
+
+        <addForeignKeyConstraint baseTableName="product_basket" baseColumnNames="basket_id" constraintName="FK_product_basket_basket" referencedTableName="basket" referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="log" baseColumnNames="basket_id" constraintName="FK_log_basket" referencedTableName="basket" referencedColumnNames="id"/>
+
+        <createIndex tableName="basket" indexName="IX_basket_user"><column name="user_id"/></createIndex>
+        <createIndex tableName="product_basket" indexName="IX_product_basket_product"><column name="product_id"/></createIndex>
+
+        <sql>
+            INSERT INTO dbo.tables (db_, name, type, author, version, service, description, column_count, created_at, last_update_at)
+            VALUES 
+            ('liquibase_lab', 'basket', 'DATA_TABLE', 'Khudanova', 1, 'basket_service', 'User shopping baskets', (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('basket')), SYSUTCDATETIME(), NULL),
+            ('liquibase_lab', 'product_basket', 'DATA_TABLE', 'Khudanova', 1, 'basket_service', 'Items in basket', (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('product_basket')), SYSUTCDATETIME(), NULL),
+            ('liquibase_lab', 'log', 'DATA_TABLE', 'Khudanova', 1, 'basket_service', 'Basket activity log', (SELECT COUNT(*) FROM sys.columns WHERE object_id = OBJECT_ID('log')), SYSUTCDATETIME(), NULL);
+        </sql>
+
+        <rollback>
+            <dropTable tableName="log"/>
+            <dropTable tableName="product_basket"/>
+            <dropTable tableName="basket"/>
+            <sql>
+                DELETE FROM dbo.tables WHERE name IN ('basket', 'product_basket', 'log');
+            </sql>
+        </rollback>
+    </changeSet>
+    <changeSet id="basket-add-column-discount" author="Khudanova">
+    <preConditions onFail="MARK_RAN">
+        <tableExists tableName="basket"/>
+    </preConditions>
+    <addColumn tableName="basket">
+        <column name="applied_discount" type="decimal(10,2)" defaultValue="0.00"/>
+    </addColumn>
+    </changeSet>
+    <changeSet id="basket-create-index" author="Khudanova">
+    <createIndex tableName="product_basket" indexName="idx_pb_basket_id">
+        <column name="basket_id"/>
+    </createIndex>
+    </changeSet>
+    <changeSet id="basket-log-trigger" author="Khudanova" runOnChange="true">
+    <sql splitStatements="false" endDelimiter="GO">
+        CREATE OR ALTER TRIGGER trg_BasketInsertLog
+        ON product_basket
+        AFTER INSERT
+        AS
+        BEGIN
+            INSERT INTO log (action_description, created_at)
+            VALUES ('Додано товар до кошика', GETDATE());
+        END;
+        GO
+    </sql>
+    </changeSet>
+
+</databaseChangeLog>

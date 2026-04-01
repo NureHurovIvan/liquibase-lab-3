@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="002-insert-basket-data" author="Khudanova">
+        <preConditions onFail="HALT">
+            <tableExists tableName="basket"/>
+            <tableExists tableName="product_basket"/>
+            <tableExists tableName="log"/>
+        </preConditions>
+
+        <insert tableName="basket"><column name="user_id" value="1"/></insert>
+        <insert tableName="basket"><column name="user_id" value="2"/></insert>
+
+        <insert tableName="product_basket">
+            <column name="basket_id" value="1"/>
+            <column name="product_id" value="2"/>
+            <column name="quantity" value="1"/>
+        </insert>
+        <insert tableName="product_basket">
+            <column name="basket_id" value="1"/>
+            <column name="product_id" value="5"/>
+            <column name="quantity" value="3"/>
+        </insert>
+        <insert tableName="product_basket">
+            <column name="basket_id" value="2"/>
+            <column name="product_id" value="1"/>
+            <column name="quantity" value="2"/>
+        </insert>
+
+        <insert tableName="log">
+            <column name="basket_id" value="1"/>
+            <column name="action" value="User 1 added product 2 to basket"/>
+        </insert>
+        <insert tableName="log">
+            <column name="basket_id" value="1"/>
+            <column name="action" value="User 1 added product 5 to basket"/>
+        </insert>
+        <insert tableName="log">
+            <column name="basket_id" value="2"/>
+            <column name="action" value="User 2 added product 1 to basket"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="log"/>
+            <delete tableName="product_basket"/>
+            <delete tableName="basket"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
